@@ -4,10 +4,10 @@ import xml.etree.ElementTree as ET
 import xml.dom.minidom
 
 
-
 class Instruction:
     instruction_list = []
 
+    # dict of opcodes and their expected arguments
     opcode_dict = {
         "MOVE": ["var", "symb"],
         "CREATEFRAME": [],
@@ -52,16 +52,21 @@ class Instruction:
         self.opcode = opcode
         self.args = args
         self.instruction_list.append(self)
+        # rovnou syntakticka validace instrukce
         self.validate_args()
 
     # validate arguments based on the opcode
     def validate_args(self):
+        #ocekavane vyctem z dict
         expect = Instruction.opcode_dict[self.opcode]
+
         if len(self.args) != len(expect):
             sys.stderr.write(f"Chybný počet argumentů v instrukci:  {self.order} {self.opcode}")
             sys.exit(23)
+
         for i in range(len(self.args)):
             match expect[i]:
+                # regexy na matchovani by mely byt asi v pohode
                 case "var":
                     if not re.match(r"^(G|L|T)F@[a-zA-Z_\-$&%*!?][\w\-$&%*!?]*$", self.args[i]):
                         sys.stderr.write(f"Chybný formát argumentu v instrukci:  {self.order} {self.opcode} : {self.args[i]} ")
@@ -89,6 +94,7 @@ class Instruction:
             arg.set("type", self._set_type(self.args[i]))
             arg.text = self._set_text(self.args[i])
 
+    # set type of argument element
     def _set_type(self, arg: str):
         if re.match(r"^(int@)", arg):
             return "int"
@@ -107,6 +113,7 @@ class Instruction:
         else:
             return None
 
+    # set text of argument element
     def _set_text(self, arg: str):
         if re.match(r"^((int@)|(string@)|(bool@)|(nil@))", arg):
             return arg[arg.find("@")+1:]
@@ -116,13 +123,14 @@ class Instruction:
             return arg
         else:
             return None
-
+        
+#####################################################################################
 
 def argv_validate(args: list):
-    # parsovani argumentu
+    # parsovani vstupnich argumentu
     if len(args) == 2:
         if args[1] == "--help" or args[1] == "-h":
-            print("UsAgE:HeLp Me PlEaSe")
+            print("UsAgE:HeLp Me PlEaSe jenom --- python3 parse.py [<input.txt]")
             sys.exit(0)
         else:
             sys.stderr.write("Neplatný argument\n")
@@ -133,7 +141,7 @@ def argv_validate(args: list):
     else:
         pass
 
-
+##### MAIN #####
 def main():
     argv_validate(sys.argv)
 
@@ -151,6 +159,7 @@ def main():
         line = re.sub(r"#.*", "", line).strip()
         #odstraneni prazdnych radku
         if line != "":
+            # check pritomnosti povinne hlavicky
             if header == False and line == ".IPPcode24":
                 root.set("language", "IPPcode24")
                 header = True
@@ -162,13 +171,16 @@ def main():
                 sys.exit(23)
             else:
                 data = line.split()
+                # zpracovani instrukce
                 instr = Instruction(cnt, data[0].upper(), data[1:]) 
                 cnt += 1
 
 
+    # vytvoreni xml
     for instr in Instruction.instruction_list:
         instr.to_xml(root)
 
+    # usporadani xml a print
     tree = ET.ElementTree(root)
 
     xml_string = ET.tostring(root, encoding="unicode")
