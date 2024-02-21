@@ -5,8 +5,6 @@ import xml.dom.minidom
 
 
 class Instruction:
-    instruction_list = []
-
     # dict of opcodes and their expected arguments
     opcode_dict = {
         "MOVE": ["var", "symb"],
@@ -51,7 +49,6 @@ class Instruction:
         self.order = order
         self.opcode = opcode
         self.args = args
-        self.instruction_list.append(self)
         # rovnou syntakticka validace instrukce
         self.validate_args()
 
@@ -149,6 +146,8 @@ def main():
     cnt = 1
     root = ET.Element("program")
 
+    instruction_list = []
+
     data = sys.stdin.read().splitlines()
     if len(data) == 0:
         sys.stderr.write("Chybějící vstupní data")
@@ -173,11 +172,12 @@ def main():
                 data = line.split()
                 # zpracovani instrukce
                 instr = Instruction(cnt, data[0].upper(), data[1:]) 
+                instruction_list.append(instr)
                 cnt += 1
 
 
     # vytvoreni xml
-    for instr in Instruction.instruction_list:
+    for instr in instruction_list:
         instr.to_xml(root)
 
     # usporadani xml a print
