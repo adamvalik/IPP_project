@@ -24,7 +24,12 @@ class Instruction:
                         sys.stderr.write(f"[ERROR] Chybny format argumentu v instrukci {self.order}: {self.opcode}")
                         sys.exit(23)
                 case "symb":
-                    if not re.match(r"^((int@(\+|-)?((\d(_?\d)*)|(0[oO][0-7]+)|(0[xX][\da-fA-F]+)))|(string@([^\s#\\]|\\\d{3})*)|(bool@(true|false))|(nil@nil)|((G|L|T)F@[a-zA-Z_\-$&%*!?][\w\-$&%*!?]*))$", self.args[i]):
+                    if not re.match(r'''^((int@(\+|-)?((\d(_?\d)*)|(0[oO][0-7]+)|(0[xX][\da-fA-F]+)))
+                                          |(string@([^\s#\\]|\\\d{3})*)
+                                          |(bool@(true|false))
+                                          |(nil@nil)
+                                          |((G|L|T)F@[a-zA-Z_\-$&%*!?][\w\-$&%*!?]*) 
+                                        )$''', self.args[i]):
                         sys.stderr.write(f"[ERROR] Chybny format argumentu v instrukci {self.order}: {self.opcode}")
                         sys.exit(23)
                 case "label":
@@ -156,15 +161,21 @@ class InstructionFactory:
         
 ##########################################################################################################
 
+HELP = """
+Uziti:
+    python3.10 parse.py [--help|-h]
+
+"""
+
 def argv_validate(args: list):
-    # parsovani vstupnich argumentu
+    # kontrola vstupnich argumentu
     if len(args) == 2:
         if args[1] == "--help" or args[1] == "-h":
-            print("Usage:")
-            print("\tpython3.10 parse.py [--help|-h]\n")
+            print(HELP)
             sys.exit(0)
         else:
             sys.stderr.write("[ERROR] Neplatny argument\n")
+            sys.stderr.write(HELP)
             sys.exit(10)
     elif len(args) > 2:
         sys.stderr.write("[ERROR] Neplatny pocet argumentu\n")
