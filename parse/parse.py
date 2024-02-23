@@ -5,83 +5,38 @@ import xml.dom.minidom
 
 
 class Instruction:
-    # dict of opcodes and their expected arguments
-    opcode_dict = {
-        "MOVE": ["var", "symb"],
-        "CREATEFRAME": [],
-        "PUSHFRAME": [],
-        "POPFRAME": [],
-        "DEFVAR": ["var"],
-        "CALL": ["label"],
-        "RETURN": [],
-        "PUSHS": ["symb"],
-        "POPS": ["var"],
-        "ADD": ["var", "symb", "symb"],
-        "SUB": ["var", "symb", "symb"],
-        "MUL": ["var", "symb", "symb"],
-        "IDIV": ["var", "symb", "symb"],
-        "LT": ["var", "symb", "symb"],
-        "GT": ["var", "symb", "symb"],
-        "EQ": ["var", "symb", "symb"],
-        "AND": ["var", "symb", "symb"],
-        "OR": ["var", "symb", "symb"],
-        "NOT": ["var", "symb"],
-        "INT2CHAR": ["var", "symb"],
-        "STRI2INT": ["var", "symb", "symb"],
-        "READ": ["var", "type"],
-        "WRITE": ["symb"],
-        "CONCAT": ["var", "symb", "symb"],
-        "STRLEN": ["var", "symb"],
-        "GETCHAR": ["var", "symb", "symb"],
-        "SETCHAR": ["var", "symb", "symb"],
-        "TYPE": ["var", "symb"],
-        "LABEL": ["label"],
-        "JUMP": ["label"],
-        "JUMPIFEQ": ["label", "symb", "symb"],
-        "JUMPIFNEQ": ["label", "symb", "symb"],
-        "EXIT": ["symb"],
-        "DPRINT": ["symb"],
-        "BREAK": [],
-    }
-
-    # constructor
     def __init__(self, order: int, opcode: str, args: list):
         self.order = order
         self.opcode = opcode
         self.args = args
-        # rovnou syntakticka validace instrukce
-        self.validate_args()
 
-    # validate arguments based on the opcode
+    # validace argumentu instrukce
     def validate_args(self):
-        #ocekavane vyctem z dict
-        expect = Instruction.opcode_dict[self.opcode]
-
-        if len(self.args) != len(expect):
-            sys.stderr.write(f"Chybný počet argumentů v instrukci:  {self.order} {self.opcode}")
+        if len(self.args) != len(self.expected_args):
+            sys.stderr.write(f"[ERROR] Chybny pocet argumentu v instrukci {self.order}: {self.opcode}")
             sys.exit(23)
 
         for i in range(len(self.args)):
-            match expect[i]:
-                # regexy na matchovani by mely byt asi v pohode
-                case "var":
+            match self.expected_args[i]:
+                # regularni vyrazy na porovnani ocekavaneho formatu argumentu
+                case "var": 
                     if not re.match(r"^(G|L|T)F@[a-zA-Z_\-$&%*!?][\w\-$&%*!?]*$", self.args[i]):
-                        sys.stderr.write(f"Chybný formát argumentu v instrukci:  {self.order} {self.opcode} : {self.args[i]} ")
+                        sys.stderr.write(f"[ERROR] Chybny format argumentu v instrukci {self.order}: {self.opcode}")
                         sys.exit(23)
                 case "symb":
                     if not re.match(r"^((int@(\+|-)?((\d(_?\d)*)|(0[oO][0-7]+)|(0[xX][\da-fA-F]+)))|(string@([^\s#\\]|\\\d{3})*)|(bool@(true|false))|(nil@nil)|((G|L|T)F@[a-zA-Z_\-$&%*!?][\w\-$&%*!?]*))$", self.args[i]):
-                        sys.stderr.write(f"Chybný formát argumentu v instrukci:  {self.order} {self.opcode} : {self.args[i]} ")
+                        sys.stderr.write(f"[ERROR] Chybny format argumentu v instrukci {self.order}: {self.opcode}")
                         sys.exit(23)
                 case "label":
                     if not re.match(r"^[a-zA-Z_\-$&%*!?][\w\-$&%*!?]*$", self.args[i]):
-                        sys.stderr.write(f"Chybný formát argumentu v instrukci:  {self.order} {self.opcode} : {self.args[i]} ")
+                        sys.stderr.write(f"[ERROR] Chybny format argumentu v instrukci {self.order}: {self.opcode}")
                         sys.exit(23)
                 case "type":
                     if not re.match(r"^(int|bool|string)$", self.args[i]):
-                        sys.stderr.write(f"Chybný formát argumentu v instrukci:  {self.order} {self.opcode} : {self.args[i]} ")
+                        sys.stderr.write(f"[ERROR] Chybny format argumentu v instrukci {self.order}: {self.opcode}")
                         sys.exit(23)
 
-    # convert instruction to xml
+    # vytvoreni xml reprezentace instrukce
     def to_xml(self, root: ET.Element):
         instr = ET.SubElement(root, "instruction")
         instr.set("order", str(self.order))
@@ -91,7 +46,7 @@ class Instruction:
             arg.set("type", self._set_type(self.args[i]))
             arg.text = self._set_text(self.args[i])
 
-    # set type of argument element
+    # urceni typu argumentu
     def _set_type(self, arg: str):
         if re.match(r"^(int@)", arg):
             return "int"
@@ -110,7 +65,7 @@ class Instruction:
         else:
             return None
 
-    # set text of argument element
+    # urceni textu argumentu
     def _set_text(self, arg: str):
         if re.match(r"^((int@)|(string@)|(bool@)|(nil@))", arg):
             return arg[arg.find("@")+1:]
@@ -120,73 +75,142 @@ class Instruction:
             return arg
         else:
             return None
+
+
+
+# CREATEFRAME, PUSHFRAME, POPFRAME, RETURN, BREAK
+class InstructionType1(Instruction):
+    def __init__(self, order: int, opcode: str, args: list):
+        super().__init__(order, opcode, args)
+        self.expected_args = []
+
+# DEFVAR, POPS
+class InstructionType2(Instruction):
+    def __init__(self, order: int, opcode: str, args: list):
+        super().__init__(order, opcode, args)
+        self.expected_args = ["var"]
+
+# EXIT, PUSHS, WRITE, DPRINT
+class InstructionType3(Instruction):
+    def __init__(self, order: int, opcode: str, args: list):
+        super().__init__(order, opcode, args)
+        self.expected_args = ["symb"]
+
+# CALL, LABEL, JUMP
+class InstructionType4(Instruction):
+    def __init__(self, order: int, opcode: str, args: list):
+        super().__init__(order, opcode, args)
+        self.expected_args = ["label"]
+
+# MOVE, TYPE, NOT, INT2CHAR, STRLEN
+class InstructionType5(Instruction):
+    def __init__(self, order: int, opcode: str, args: list):
+        super().__init__(order, opcode, args)
+        self.expected_args = ["var", "symb"]
+
+# READ
+class InstructionType6(Instruction):
+    def __init__(self, order: int, opcode: str, args: list):
+        super().__init__(order, opcode, args)
+        self.expected_args = ["var", "type"]
+
+# ADD, SUB, MUL, IDIV, LT, GT, EQ, AND, OR, STRI2INT, CONCAT, GETCHAR, SETCHAR
+class InstructionType7(Instruction):
+    def __init__(self, order: int, opcode: str, args: list):
+        super().__init__(order, opcode, args)
+        self.expected_args = ["var", "symb", "symb"]
+
+# JUMPIFEQ, JUMPIFNEQ
+class InstructionType8(Instruction):
+    def __init__(self, order: int, opcode: str, args: list):
+        super().__init__(order, opcode, args)
+        self.expected_args = ["label", "symb", "symb"]
+
+
+
+class InstructionFactory:
+    @staticmethod
+    def create_instruction(order: int, data: list):
+        data[0] = data[0].upper()
+        match data[0]:
+            case "CREATEFRAME" | "PUSHFRAME" | "POPFRAME" | "RETURN" | "BREAK":
+                return InstructionType1(order, data[0], data[1:])
+            case "DEFVAR" | "POPS":
+                return InstructionType2(order, data[0], data[1:])
+            case "EXIT" | "PUSHS" | "WRITE" | "DPRINT":
+                return InstructionType3(order, data[0], data[1:])
+            case "CALL" | "LABEL" | "JUMP":
+                return InstructionType4(order, data[0], data[1:])
+            case "MOVE" | "TYPE" | "NOT" | "INT2CHAR" | "STRLEN":
+                return InstructionType5(order, data[0], data[1:])
+            case "READ":
+                return InstructionType6(order, data[0], data[1:])
+            case "ADD" | "SUB" | "MUL" | "IDIV" | "LT" | "GT" | "EQ" | "AND" | "OR" | "STRI2INT" | "CONCAT" | "GETCHAR" | "SETCHAR":
+                return InstructionType7(order, data[0], data[1:])
+            case "JUMPIFEQ" | "JUMPIFNEQ":
+                return InstructionType8(order, data[0], data[1:])
+            case _:
+                sys.stderr.write(f"[ERROR] Neznamy nebo chybny operacni kod: {data[0]}")
+                sys.exit(22)
+    
         
-#####################################################################################
+##########################################################################################################
 
 def argv_validate(args: list):
     # parsovani vstupnich argumentu
     if len(args) == 2:
         if args[1] == "--help" or args[1] == "-h":
-            print("UsAgE:HeLp Me PlEaSe jenom --- python3 parse.py [<input.txt]")
+            print("Usage:")
+            print("\tpython3.10 parse.py [--help|-h]\n")
             sys.exit(0)
         else:
-            sys.stderr.write("Neplatný argument\n")
+            sys.stderr.write("[ERROR] Neplatny argument\n")
             sys.exit(10)
     elif len(args) > 2:
-        sys.stderr.write("Neplatný počet argumentů")
+        sys.stderr.write("[ERROR] Neplatny pocet argumentu\n")
         sys.exit(10)
     else:
         pass
 
-##### MAIN #####
+
 def main():
     argv_validate(sys.argv)
 
     header = False
-    cnt = 1
+    order = 1
     root = ET.Element("program")
-
-    instruction_list = []
 
     data = sys.stdin.read().splitlines()
     if len(data) == 0:
-        sys.stderr.write("Chybějící vstupní data")
+        sys.stderr.write("[ERROR] Chybejici vstupni data\n")
         sys.exit(21)
     
     for line in data:
         # odstraneni komentaru
         line = re.sub(r"#.*", "", line).strip()
-        #odstraneni prazdnych radku
+        # odstraneni prazdnych radku
         if line != "":
-            # check pritomnosti povinne hlavicky
+            # kontrola pritomnosti povinne hlavicky
             if header == False and line == ".IPPcode24":
                 root.set("language", "IPPcode24")
                 header = True
             elif header == False and line != ".IPPcode24":
-                sys.stderr.write("Chybějící hlavička")
+                sys.stderr.write("[ERROR] Chybejici hlavicka\n")
                 sys.exit(21)
             elif header == True and line == ".IPPcode24":
-                sys.stderr.write("too many headers")
+                sys.stderr.write("[ERROR] Prilis moc hlavicek\n")
                 sys.exit(23)
             else:
-                data = line.split()
                 # zpracovani instrukce
-                instr = Instruction(cnt, data[0].upper(), data[1:]) 
-                instruction_list.append(instr)
-                cnt += 1
-
-
-    # vytvoreni xml
-    for instr in instruction_list:
-        instr.to_xml(root)
-
-    # usporadani xml a print
-    tree = ET.ElementTree(root)
+                instr = InstructionFactory.create_instruction(order, line.split())
+                # validace argumentu instrukce
+                instr.validate_args()
+                # vytvoreni xml reprezentace instrukce
+                instr.to_xml(root)
+                order += 1
 
     xml_string = ET.tostring(root, encoding="unicode")
-
     print(xml.dom.minidom.parseString(xml_string).toprettyxml(encoding='UTF-8').decode())
-
 
 if __name__ == "__main__":
     main()
