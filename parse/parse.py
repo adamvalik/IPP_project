@@ -24,12 +24,7 @@ class Instruction:
                         sys.stderr.write(f"[ERROR] Chybny format argumentu v instrukci {self.order}: {self.opcode}")
                         sys.exit(23)
                 case "symb":
-                    if not re.match(r'''^((int@(\+|-)?((\d(_?\d)*)|(0[oO][0-7]+)|(0[xX][\da-fA-F]+)))
-                                          |(string@([^\s#\\]|\\\d{3})*)
-                                          |(bool@(true|false))
-                                          |(nil@nil)
-                                          |((G|L|T)F@[a-zA-Z_\-$&%*!?][\w\-$&%*!?]*) 
-                                        )$''', self.args[i]):
+                    if not re.match(r"^((int@(\+|-)?((\d(_?\d)*)|(0[oO][0-7]+)|(0[xX][\da-fA-F]+)))|(string@([^\s#\\]|\\\d{3})*)|(bool@(true|false))|(nil@nil)|((G|L|T)F@[a-zA-Z_\-$&%*!?][\w\-$&%*!?]*))$", self.args[i]):
                         sys.stderr.write(f"[ERROR] Chybny format argumentu v instrukci {self.order}: {self.opcode}")
                         sys.exit(23)
                 case "label":
@@ -157,9 +152,8 @@ class InstructionFactory:
             case _:
                 sys.stderr.write(f"[ERROR] Neznamy nebo chybny operacni kod: {data[0]}")
                 sys.exit(22)
-    
-        
-##########################################################################################################
+
+
 
 HELP = """
 Uziti:
@@ -167,62 +161,71 @@ Uziti:
 
 """
 
-def argv_validate(args: list):
-    # kontrola vstupnich argumentu
-    if len(args) == 2:
-        if args[1] == "--help" or args[1] == "-h":
-            print(HELP)
-            sys.exit(0)
-        else:
-            sys.stderr.write("[ERROR] Neplatny argument\n")
-            sys.stderr.write(HELP)
-            sys.exit(10)
-    elif len(args) > 2:
-        sys.stderr.write("[ERROR] Neplatny pocet argumentu\n")
-        sys.exit(10)
-    else:
-        pass
 
+class Parser:
+    def __init__(self, argv: list):
+        self.args = argv
+        self.argv_validate()
+        self.root = ET.Element("program")
 
-def main():
-    argv_validate(sys.argv)
-
-    header = False
-    order = 1
-    root = ET.Element("program")
-
-    data = sys.stdin.read().splitlines()
-    if len(data) == 0:
-        sys.stderr.write("[ERROR] Chybejici vstupni data\n")
-        sys.exit(21)
-    
-    for line in data:
-        # odstraneni komentaru
-        line = re.sub(r"#.*", "", line).strip()
-        # odstraneni prazdnych radku
-        if line != "":
-            # kontrola pritomnosti povinne hlavicky
-            if header == False and line == ".IPPcode24":
-                root.set("language", "IPPcode24")
-                header = True
-            elif header == False and line != ".IPPcode24":
-                sys.stderr.write("[ERROR] Chybejici hlavicka\n")
-                sys.exit(21)
-            elif header == True and line == ".IPPcode24":
-                sys.stderr.write("[ERROR] Prilis moc hlavicek\n")
-                sys.exit(23)
+    def argv_validate(self):
+        # kontrola vstupnich argumentu
+        if len(self.args) == 2:
+            if self.args[1] == "--help" or self.args[1] == "-h":
+                print(HELP)
+                sys.exit(0)
             else:
-                # zpracovani instrukce
-                instr = InstructionFactory.create_instruction(order, line.split())
-                # validace argumentu instrukce
-                instr.validate_args()
-                # vytvoreni xml reprezentace instrukce
-                instr.to_xml(root)
-                order += 1
+                sys.stderr.write("[ERROR] Neplatny argument\n")
+                sys.stderr.write(HELP)
+                sys.exit(10)
+        elif len(self.args) > 2:
+            sys.stderr.write("[ERROR] Neplatny pocet argumentu\n")
+            sys.exit(10)
+        else:
+            pass
 
-    xml_string = ET.tostring(root, encoding="unicode")
-    print(xml.dom.minidom.parseString(xml_string).toprettyxml(encoding='UTF-8').decode())
+    def parse(self):
+        header = False
+        order = 1
+
+        data = sys.stdin.read().splitlines()
+        if len(data) == 0:
+            sys.stderr.write("[ERROR] Chybejici vstupni data\n")
+            sys.exit(21)
+        
+        for line in data:
+            # odstraneni komentaru
+            line = re.sub(r"#.*", "", line).strip()
+            # odstraneni prazdnych radku
+            if line != "":
+                # kontrola pritomnosti povinne hlavicky
+                if header == False and line == ".IPPcode24":
+                    self.root.set("language", "IPPcode24")
+                    header = True
+                elif header == False and line != ".IPPcode24":
+                    sys.stderr.write("[ERROR] Chybejici hlavicka\n")
+                    sys.exit(21)
+                elif header == True and line == ".IPPcode24":
+                    sys.stderr.write("[ERROR] Prilis moc hlavicek\n")
+                    sys.exit(23)
+                else:
+                    # zpracovani instrukce
+                    instr = InstructionFactory.create_instruction(order, line.split())
+                    # validace argumentu instrukce
+                    instr.validate_args()
+                    # vytvoreni xml reprezentace instrukce
+                    instr.to_xml(self.root)
+                    order += 1
+
+    def print_xml(self):
+        xml_string = ET.tostring(self.root, encoding="unicode")
+        print(xml.dom.minidom.parseString(xml_string).toprettyxml(encoding='UTF-8').decode())
+        
+    
+        
+##########################################################################################################
 
 if __name__ == "__main__":
-    main()
-    sys.exit(0)
+    parser = Parser(sys.argv)
+    parser.parse()
+    parser.print_xml()
