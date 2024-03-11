@@ -180,6 +180,7 @@ class Parser:
                 sys.exit(10)
         elif len(self.args) > 2:
             sys.stderr.write("[ERROR] Neplatny pocet argumentu\n")
+            sys.stderr.write(HELP)
             sys.exit(10)
         else:
             pass
