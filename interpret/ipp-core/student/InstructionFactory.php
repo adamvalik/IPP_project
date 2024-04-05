@@ -6,18 +6,8 @@ use DOMElement;
 use IPP\Student\Exceptions\XMLStructureException;
 
 abstract class InstructionFactory {
-    /**
-     * @var array<int>
-     */
-    public static $ordersSeen = [];
 
     public static function createInstruction(DOMElement $nodeInstruction, Interpreter $interpret): Instruction {
-        // XML order validation
-        $order = intval($nodeInstruction->getAttribute('order'));
-        if (in_array($order, self::$ordersSeen) || $order < 0) {
-            throw new XMLStructureException();
-        }
-        self::$ordersSeen[] = $order;
         
         $opcode = $nodeInstruction->getAttribute('opcode');
         $namespace = 'IPP\Student\Instructions\\';

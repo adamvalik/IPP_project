@@ -11,24 +11,14 @@ namespace IPP\Student;
 use DOMElement;
 use IPP\Core\AbstractInterpreter;
 use IPP\Core\ReturnCode;
-use IPP\Student\Exceptions\XMLFormatException;
-use IPP\Student\Exceptions\XMLStructureException;
 
-
-//https://www.w3.org/TR/xml/#sec-well-formed
 
 class Interpreter extends AbstractInterpreter {
 
     public function execute(): int {
-        $dom = $this->source->getDOMDocument();   
+        $dom = $this->source->getDOMDocument();  
+        XMLValidator::validateXML($dom);
         $programElement = $dom->documentElement;     
-        
-        // validate the root element <program>
-        if ($programElement !== null && 
-        ($programElement->tagName !== null && $programElement->tagName !== 'program' 
-        || $programElement->getAttribute('language') !== null && $programElement->getAttribute('language') !== 'IPPcode24')) {
-            throw new XMLFormatException();
-        }
         
         $instructions = [];
 
@@ -36,18 +26,12 @@ class Interpreter extends AbstractInterpreter {
             // create a list of instructions
             foreach ($programElement->childNodes as $DOMInstruction) {
                 if ($DOMInstruction instanceof DOMElement) {
-                    if ($DOMInstruction->tagName !== 'instruction') {
-                        // <program> can contain only <instruction> elements
-                        throw new XMLStructureException();
-                    }
-            
-                    $instructions[] = InstructionFactory::createInstruction($DOMInstruction, $this); 
+                    $instructions[] = InstructionFactory::createInstruction($DOMInstruction, $this);
                 }
             }
         }
         else {
             // there is only <program> element
-            $this->stdout->writeString("Only program element\n");
             return ReturnCode::OK;
         }
 
@@ -63,9 +47,6 @@ class Interpreter extends AbstractInterpreter {
             $instructions[$instruction_pointer]->execute();
             $instruction_pointer++;
         }
-
-
-
 
         return ReturnCode::OK;
     }
