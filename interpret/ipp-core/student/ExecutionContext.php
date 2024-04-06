@@ -61,8 +61,6 @@ class ExecutionContext {
         }
     }
 
-
-
     public function pushFrame(): void {
         // push temporary frame into local frames
         $this->tmpFrame !== null ? array_push($this->localFrames, $this->tmpFrame) : throw new NonExistingFrameException("No temporary frame available");

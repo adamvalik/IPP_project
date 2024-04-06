@@ -10,15 +10,25 @@ abstract class Instruction {
     protected int $order;
     protected Interpreter $interpreter;
     protected ExecutionContext $executionContext;
+    /**
+     * @var array<string>
+     */
+    protected $data_stack;
+    /**
+     * @var array<int>
+     */
+    protected $call_stack;
 
     /**
      * @var array<Argument>
      */
     protected $arguments = [];
 
-    public function __construct(DOMElement $instructionElement, Interpreter $interpreter, ExecutionContext $executionContext) {
+    public function __construct(DOMElement $instructionElement, Interpreter $interpreter, ExecutionContext $executionContext, array &$data_stack, array &$call_stack) {
         $this->interpreter = $interpreter;
         $this->executionContext = $executionContext;
+        $this->data_stack = &$data_stack;
+        $this->call_stack = &$call_stack;
         $this->order = intval($instructionElement->getAttribute('order'));
         $this->parseArguments($instructionElement);
     }

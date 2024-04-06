@@ -15,16 +15,18 @@ use IPP\Core\ReturnCode;
 
 class Interpreter extends AbstractInterpreter {
 
-    //private array $label_map = [];
-
     public function execute(): int {
         $executionContext = new ExecutionContext();
+        $run = new RuntimeEnv();
+
         $dom = $this->source->getDOMDocument();  
+
         
         // validate the XML
         XMLValidator::validateXML($dom);
         
-        $programElement = $dom->documentElement;     
+        $programElement = $dom->documentElement;
+
         
         $instructions = [];
 
@@ -32,7 +34,7 @@ class Interpreter extends AbstractInterpreter {
             // create a list of instructions
             foreach ($programElement->childNodes as $DOMInstruction) {
                 if ($DOMInstruction instanceof DOMElement) {
-                    $instructions[] = InstructionFactory::createInstruction($DOMInstruction, $this, $executionContext);
+                    $instructions[] = InstructionFactory::createInstruction($DOMInstruction, $this, $executionContext, $run);
                 }
             }
         }
@@ -46,22 +48,14 @@ class Interpreter extends AbstractInterpreter {
             return $a->getOrder() - $b->getOrder();
         });
 
-        // create label map
-        // $this->label_map = [];
-        // for ($i = 0; $i < count($instructions); $i++) {
-        //     if ($instructions[$i] instanceof Instructions\InstructionLABEL) {
-        //         // map the label to the index of the instruction
-        //         $this->label_map[$instructions[$i]->getArg(1)->getValue()] = $i; // or $instructions[$i]->getOrder();
-        //     }
-        // }
+        // create a label map
+        $run->createLabelMap($instructions);
 
         // execute the instructions
-        $instruction_pointer = 0;
-
-        // while ($instruction_pointer < count($instructions)) {
-        //     $instructions[$instruction_pointer]->execute();
-        //     $instruction_pointer++;
-        // }
+        while ($run->IP() < count($instructions)) {
+            $instructions[$run->IP()]->execute();
+            $run->incIP();
+        }
 
         return ReturnCode::OK;
     }
