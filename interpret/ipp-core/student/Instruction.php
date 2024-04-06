@@ -9,14 +9,16 @@ abstract class Instruction {
 
     protected int $order;
     protected Interpreter $interpreter;
+    protected ExecutionContext $executionContext;
 
     /**
      * @var array<Argument>
      */
     protected $arguments = [];
 
-    public function __construct(DOMElement $instructionElement, Interpreter $interpreter) {
+    public function __construct(DOMElement $instructionElement, Interpreter $interpreter, ExecutionContext $executionContext) {
         $this->interpreter = $interpreter;
+        $this->executionContext = $executionContext;
         $this->order = intval($instructionElement->getAttribute('order'));
         $this->parseArguments($instructionElement);
     }

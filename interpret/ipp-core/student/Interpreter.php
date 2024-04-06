@@ -15,7 +15,10 @@ use IPP\Core\ReturnCode;
 
 class Interpreter extends AbstractInterpreter {
 
+    //private array $label_map = [];
+
     public function execute(): int {
+        $executionContext = new ExecutionContext();
         $dom = $this->source->getDOMDocument();  
         
         // validate the XML
@@ -29,7 +32,7 @@ class Interpreter extends AbstractInterpreter {
             // create a list of instructions
             foreach ($programElement->childNodes as $DOMInstruction) {
                 if ($DOMInstruction instanceof DOMElement) {
-                    $instructions[] = InstructionFactory::createInstruction($DOMInstruction, $this);
+                    $instructions[] = InstructionFactory::createInstruction($DOMInstruction, $this, $executionContext);
                 }
             }
         }
@@ -44,13 +47,13 @@ class Interpreter extends AbstractInterpreter {
         });
 
         // create label map
-        $label_map = [];
-        for ($i = 0; $i < count($instructions); $i++) {
-            if ($instructions[$i] instanceof Instructions\InstructionLABEL) {
-                // map the label to the index of the instruction
-                $label_map[$instructions[$i]->getArg(1)->getValue()] = $i; // or $instructions[$i]->getOrder();
-            }
-        }
+        // $this->label_map = [];
+        // for ($i = 0; $i < count($instructions); $i++) {
+        //     if ($instructions[$i] instanceof Instructions\InstructionLABEL) {
+        //         // map the label to the index of the instruction
+        //         $this->label_map[$instructions[$i]->getArg(1)->getValue()] = $i; // or $instructions[$i]->getOrder();
+        //     }
+        // }
 
         // execute the instructions
         $instruction_pointer = 0;

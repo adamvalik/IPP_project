@@ -206,7 +206,7 @@ abstract class XMLValidator {
                         throw new XMLStructureException("Invalid label value in instruction '$order' '$opcode'");
                     }
                     if (in_array($argValue, self::$labelsSeen)) {
-                        throw new XMLStructureException("Duplicate label value in instruction '$order' '$opcode'");
+                        throw new XMLStructureException("Duplicit label value in instruction '$order' '$opcode'");
                     }
                     self::$labelsSeen[] = $argValue;
                     break;
