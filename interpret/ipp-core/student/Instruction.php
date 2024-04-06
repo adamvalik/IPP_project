@@ -9,26 +9,18 @@ abstract class Instruction {
 
     protected int $order;
     protected Interpreter $interpreter;
-    protected ExecutionContext $executionContext;
-    /**
-     * @var array<string>
-     */
-    protected $data_stack;
-    /**
-     * @var array<int>
-     */
-    protected $call_stack;
+    protected ExecutionContext $exec;
+    protected RuntimeEnv $runEnv;
 
     /**
      * @var array<Argument>
      */
     protected $arguments = [];
 
-    public function __construct(DOMElement $instructionElement, Interpreter $interpreter, ExecutionContext $executionContext, array &$data_stack, array &$call_stack) {
+    public function __construct(DOMElement $instructionElement, Interpreter $interpreter, ExecutionContext $executionContext, RuntimeEnv $runtimeEnv) {
         $this->interpreter = $interpreter;
-        $this->executionContext = $executionContext;
-        $this->data_stack = &$data_stack;
-        $this->call_stack = &$call_stack;
+        $this->exec = $executionContext;
+        $this->runEnv = $runtimeEnv;
         $this->order = intval($instructionElement->getAttribute('order'));
         $this->parseArguments($instructionElement);
     }
@@ -37,7 +29,7 @@ abstract class Instruction {
         return $this->order;
     }
 
-    public function getOpcode(): string {
+    public function getClassName(): string {
         return static::class;
     }
 

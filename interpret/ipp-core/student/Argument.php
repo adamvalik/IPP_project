@@ -24,8 +24,17 @@ class Argument {
         return $this->type;
     }
 
-    public function getValue(): string {
-        return $this->value;
+    public function getValue(): mixed {
+        switch ($this->type) {
+            case 'int':
+                return $this->intValue();
+            case 'bool':
+                return $this->boolValue();
+            case 'string':
+                return $this->stringValue();
+            default:
+                return $this->value;
+        }
     }
 
     public function getArgOrder(): int {

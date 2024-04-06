@@ -32,7 +32,7 @@ class ExecutionContext {
         }
     }
 
-    public function set_variable(string $var): void {
+    public function setVariable(string $var): void {
         $scope = explode('@', $var)[0];
         $name = explode('@', $var)[1];
 
@@ -45,7 +45,7 @@ class ExecutionContext {
         }
     }
 
-    public function get_variable(string $name): Variable {
+    public function getVariable(string $name): Variable {
         $scope = explode('@', $name)[0];
         $name = explode('@', $name)[1];
 

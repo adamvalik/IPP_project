@@ -2,6 +2,8 @@
 
 namespace IPP\Student;
 
+use IPP\Student\Exceptions\MissingValueException;
+
 class RuntimeEnv {
     /**
      * @var array<string,int> 
@@ -30,6 +32,10 @@ class RuntimeEnv {
         }
     }
 
+    public function setIPtoLabel(string $label): void {
+        $this->instrPtr = $this->labelMap[$label];
+    }
+
     public function IP(): int {
         return $this->instrPtr;
     }
@@ -47,7 +53,7 @@ class RuntimeEnv {
     }
 
     public function popData(): string {
-        return array_pop($this->dataStack);
+        return !empty($this->dataStack) ? array_pop($this->dataStack) : throw new MissingValueException("Data stack is empty");
     }
 
     public function pushCall(int $call): void {
@@ -55,7 +61,7 @@ class RuntimeEnv {
     }
 
     public function popCall(): int {
-        return array_pop($this->callStack);
+        return !empty($this->callStack) ? array_pop($this->callStack) : throw new MissingValueException("Call stack is empty");
     }
     
 }

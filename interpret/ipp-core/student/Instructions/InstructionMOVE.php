@@ -8,6 +8,9 @@ use IPP\Student\Instruction;
 class InstructionMOVE extends Instruction {
 
     public function execute(): void {
-        // Implementation
+        $var = $this->exec->getVariable($this->getArg(1)->getValue());
+        $symb = $this->getArg(2);
+
+        $var->setValue($symb->getValue());
     }
 }

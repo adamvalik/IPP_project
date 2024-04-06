@@ -16,7 +16,7 @@ use IPP\Core\ReturnCode;
 class Interpreter extends AbstractInterpreter {
 
     public function execute(): int {
-        $executionContext = new ExecutionContext();
+        $exec = new ExecutionContext();
         $run = new RuntimeEnv();
 
         $dom = $this->source->getDOMDocument();  
@@ -34,7 +34,7 @@ class Interpreter extends AbstractInterpreter {
             // create a list of instructions
             foreach ($programElement->childNodes as $DOMInstruction) {
                 if ($DOMInstruction instanceof DOMElement) {
-                    $instructions[] = InstructionFactory::createInstruction($DOMInstruction, $this, $executionContext, $run);
+                    $instructions[] = InstructionFactory::createInstruction($DOMInstruction, $this, $exec, $run);
                 }
             }
         }
