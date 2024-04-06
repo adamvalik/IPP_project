@@ -9,19 +9,14 @@ class Argument {
     private string $value;
     private int $argOrder;
 
-    // private int $intval;
-    // private bool $boolval;
-    // private string $stringval;
-
-
     public function __construct(string $type, string $value, int $argOrder) {
         $this->type = $type;
-        if ($value != '') {
-            $this->value = $value;
-        }
-        else {
+
+        // nodeValue returns '' when empty, only string type can have empty value
+        if ($value === '' && $type !== 'string') {
             throw new XMLStructureException("Argument value cannot be empty");
         }
+        $this->value = $value;
         $this->argOrder = $argOrder;
     }
 
@@ -37,16 +32,17 @@ class Argument {
         return $this->argOrder;
     }
 
-    // public function getIntValue(): int {
-    //     return $this->intval;
-    // }
+    public function intValue(): int {
+        $editted_value = str_replace(['_', 'o', 'O'], '', $this->value);
+        return intval($editted_value, 0); // base 0 means that intval will determine the base
+    }
 
-    // public function getBoolValue(): bool {
-    //     return $this->boolval;
-    // }
+    public function boolValue(): bool {
+        return $this->value === 'true';
+    }
 
-    // public function getStringValue(): string {
-    //     return $this->stringval;
-    // }
-
+    public function stringValue(): string {
+        // converts all escape sequences to their respective characters
+        return preg_replace_callback('/\\\d{3}/', function ($matches) { return chr((int)$matches[1]); }, $this->value ) ?? '';
+    }
 }

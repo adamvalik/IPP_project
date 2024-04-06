@@ -43,13 +43,15 @@ abstract class Instruction {
                 throw new XMLStructureException("Invalid arguments, more occurences of one argument");
             }
         }
+    }
 
-        // check the order of arguments
-        for ($i = 1; $i <= count($this->arguments); $i++) {
-            if ($this->arguments[$i - 1]->getArgOrder() !== $i) {
-                throw new XMLStructureException("Invalid argument order, arg" . $i . " is missing");
+    public function getArg(int $order): Argument {
+        foreach ($this->arguments as $argument) {
+            if ($argument->getArgOrder() === $order) {
+                return $argument;
             }
         }
+        throw new XMLStructureException("Argument with order $order not found");
     }
 
     abstract public function execute(): void;

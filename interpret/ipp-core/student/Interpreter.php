@@ -17,7 +17,10 @@ class Interpreter extends AbstractInterpreter {
 
     public function execute(): int {
         $dom = $this->source->getDOMDocument();  
+        
+        // validate the XML
         XMLValidator::validateXML($dom);
+        
         $programElement = $dom->documentElement;     
         
         $instructions = [];
@@ -40,13 +43,22 @@ class Interpreter extends AbstractInterpreter {
             return $a->getOrder() - $b->getOrder();
         });
 
+        // create label map
+        $label_map = [];
+        for ($i = 0; $i < count($instructions); $i++) {
+            if ($instructions[$i] instanceof Instructions\InstructionLABEL) {
+                // map the label to the index of the instruction
+                $label_map[$instructions[$i]->getArg(1)->getValue()] = $i; // or $instructions[$i]->getOrder();
+            }
+        }
+
         // execute the instructions
         $instruction_pointer = 0;
 
-        while ($instruction_pointer < count($instructions)) {
-            $instructions[$instruction_pointer]->execute();
-            $instruction_pointer++;
-        }
+        // while ($instruction_pointer < count($instructions)) {
+        //     $instructions[$instruction_pointer]->execute();
+        //     $instruction_pointer++;
+        // }
 
         return ReturnCode::OK;
     }

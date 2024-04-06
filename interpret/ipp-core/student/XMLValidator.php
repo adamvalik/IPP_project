@@ -114,7 +114,7 @@ abstract class XMLValidator {
             throw new XMLStructureException("Invalid order in instruction element");
         }
         if (in_array($order, self::$ordersSeen) || $order < 0) {
-            throw new XMLStructureException("Duplicate or negative order in instruction element");
+            throw new XMLStructureException("Duplicit or negative order in instruction element");
         }
         self::$ordersSeen[] = $order;
 
@@ -124,7 +124,7 @@ abstract class XMLValidator {
             if ($argElement instanceof DOMElement) {
                 // validate argument
                 if ($argElement->tagName !== 'arg1' && $argElement->tagName !== 'arg2' && $argElement->tagName !== 'arg3') {
-                    throw new XMLStructureException("Invalid element in instruction element (only arg1, arg2, arg3 are allowed)");
+                    throw new XMLStructureException("Invalid element '$argElement->tagName' in instruction element (only arg1, arg2, arg3 are allowed)");
                 }
                 if (!$argElement->hasAttribute('type')) {
                     throw new XMLStructureException("Missing attribute in argument element");
@@ -145,12 +145,19 @@ abstract class XMLValidator {
         // validate the values of arguments based on the instruction non-terminals
         foreach ($arguments as $argElement) {
             $argOrder = intval(substr($argElement->tagName, 3));
+            
+            // trying to access non-existing index (e.g. arg2 in one-arg instruction)
+            if ($argOrder > count(self::$instructions[$opcode])) {
+                throw new XMLStructureException("Invalid argument order in instruction '$order' '$opcode'");
+            }
+            
             $expectedArg = self::$instructions[$opcode][$argOrder - 1];
             $argValue = $argElement->nodeValue;
-            if ($argValue === '' || $argValue === null) {
+            $argType = $argElement->getAttribute('type');
+
+            if (($argValue === '' && $argType !== 'string') || $argValue === null) {
                 throw new XMLStructureException("Missing value in argument element");
             }
-            $argType = $argElement->getAttribute('type');
 
             switch ($expectedArg) {
                 case 'var':
