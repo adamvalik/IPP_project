@@ -24,8 +24,14 @@ class Argument {
         return $this->type;
     }
 
-    public function getValue(): mixed {
+    public function getValue(): string {
+        return $this->value;
+    }
+
+    public function getSymbValue(): mixed {
         switch ($this->type) {
+            case 'var' | 'nil':
+                return $this->value;
             case 'int':
                 return $this->intValue();
             case 'bool':
@@ -33,7 +39,7 @@ class Argument {
             case 'string':
                 return $this->stringValue();
             default:
-                return $this->value;
+                throw new XMLStructureException("Invalid argument type");
         }
     }
 

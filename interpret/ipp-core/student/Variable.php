@@ -6,30 +6,29 @@ use IPP\Student\Exceptions\MissingValueException;
 
 class Variable {
     private ?string $value;
-    private string $type;
+    private ?string $type;
     private bool $isInitialized;
 
-    public function __construct(string $type, string $value = null) {
+    public function __construct(string $type = null, string $value = null) {
         $this->type = $type;
         $this->value = $value;
-        $this->isInitialized = ($value !== null);
+        $this->isInitialized = ($value !== null && $type !== null);
     }
 
-    public function setValue(string $value): void {
+    public function setVariable(string $value, string $type): void {
         $this->value = $value;
+        $this->type = $type;
         $this->isInitialized = true;
     }
 
     public function getValue(): ?string {
+        $this->checkInitialized();
         return $this->value;
     }
 
-    public function getType(): string {
+    public function getType(): ?string {
+        $this->checkInitialized();
         return $this->type;
-    }
-
-    public function isInitialized(): bool{
-        return $this->isInitialized;
     }
 
     public function checkInitialized(): void {

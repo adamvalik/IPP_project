@@ -32,7 +32,7 @@ class ExecutionContext {
         }
     }
 
-    public function setVariable(string $var): void {
+    public function setVariable(string $var, Argument $symb): void {
         $scope = explode('@', $var)[0];
         $name = explode('@', $var)[1];
 
@@ -57,7 +57,7 @@ class ExecutionContext {
             return $this->currLocalFrame()->getVariable($name);
         }
         else {
-            throw new NonExistingFrameException("Just to satisfy the linter, this should never happen.");
+            throw new NonExistingFrameException("Just to satisfy the static analysis, this should never happen.");
         }
     }
 
