@@ -8,6 +8,6 @@ use IPP\Student\Instruction;
 class InstructionPOPFRAME extends Instruction {
 
     public function execute(): void {
-        // Implementation
+        $this->exec->popFrame();
     }
 }

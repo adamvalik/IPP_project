@@ -8,6 +8,6 @@ use IPP\Student\Instruction;
 class InstructionDEFVAR extends Instruction {
 
     public function execute(): void {
-        // Implementation
+        $this->exec->addVariable($this->arguments[0]->getVarName());
     }
 }

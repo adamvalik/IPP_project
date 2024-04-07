@@ -8,6 +8,6 @@ use IPP\Student\Instruction;
 class InstructionCREATEFRAME extends Instruction {
 
     public function execute(): void {
-        // Implementation
+        $this->exec->createTmpFrame();
     }
 }

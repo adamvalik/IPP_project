@@ -8,6 +8,8 @@ use IPP\Student\Instruction;
 class InstructionCALL extends Instruction {
 
     public function execute(): void {
-        // Implementation
+        $label = $this->arguments[0]->getLabel();
+        $this->runEnv->pushCall($this->runEnv->nextIP());
+        $this->runEnv->setIPtoLabel($label);
     }
 }

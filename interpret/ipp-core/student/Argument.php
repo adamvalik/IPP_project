@@ -24,8 +24,19 @@ class Argument {
         return $this->type;
     }
 
-    public function getValue(): string {
+    // since $value is multipurpose, value of the argument varies based on the type, for the readability of the code
+    // I've created separate getters for each type, thanks to XMLValidator and other checks I can be sure that the $value
+    // holds the expected value (label, type, var_name, or literals)
+    public function getVarName(): string {
         return $this->value;
+    }
+
+    public function getLabel(): string {
+        return $this->value;
+    }
+
+    public function getTypeValue(): string {
+        return $this->value; // -> int|bool|string
     }
 
     public function getSymbValue(): mixed {

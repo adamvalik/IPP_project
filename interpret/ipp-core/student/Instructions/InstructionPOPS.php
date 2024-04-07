@@ -8,6 +8,6 @@ use IPP\Student\Instruction;
 class InstructionPOPS extends Instruction {
 
     public function execute(): void {
-        // Implementation
+        $this->exec->setVariable($this->arguments[0]->getVarName(), $this->runEnv->popData());
     }
 }

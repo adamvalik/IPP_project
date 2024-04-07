@@ -8,6 +8,6 @@ use IPP\Student\Instruction;
 class InstructionPUSHS extends Instruction {
 
     public function execute(): void {
-        // Implementation
+        $this->runEnv->pushData($this->arguments[0]);
     }
 }

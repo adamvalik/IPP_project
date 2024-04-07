@@ -21,7 +21,7 @@ class Frame {
     }
 
     // set the variable with the given name, throw an exception if the variable does not exist
-    public function setVariable(string $name, string $type, string $value): void {
+    public function setVariable(string $name, string $type, mixed $value): void {
         isset($this->variables[$name]) ? $this->variables[$name]->setVariable($type, $value) : throw new NonExistingVariableException("Variable $name not found");
     }
 

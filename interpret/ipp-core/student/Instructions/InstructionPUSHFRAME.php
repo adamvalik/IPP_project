@@ -8,6 +8,6 @@ use IPP\Student\Instruction;
 class InstructionPUSHFRAME extends Instruction {
 
     public function execute(): void {
-        // Implementation
+        $this->exec->pushFrame();
     }
 }

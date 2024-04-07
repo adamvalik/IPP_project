@@ -36,12 +36,26 @@ class ExecutionContext {
         $scope = explode('@', $var)[0];
         $name = explode('@', $var)[1];
 
-        if ($scope === 'GF') {
-            $this->globalFrame->setVariable($name);
-        } else if ($scope === 'TF') {
-            $this->tmpFrame !== null ? $this->tmpFrame->setVariable($name) : throw new NonExistingFrameException("No temporary frame available");
-        } else if ($scope === 'LF') {
-            $this->currLocalFrame()->setVariable($name);
+        // symb can be literal or variable
+        if ($symb->getType() === 'var') {
+            // variable -> if arg is var, than its value is variable name
+            if ($scope === 'GF') {
+                $this->globalFrame->setVariable($name, $this->getVariable($symb->getVarName())->getType(), $this->getVariable($symb->getVarName())->getValue());
+            } else if ($scope === 'TF') {
+                $this->tmpFrame !== null ? $this->tmpFrame->setVariable($name, $this->getVariable($symb->getVarName())->getType(), $this->getVariable($symb->getVarName())->getValue()) : throw new NonExistingFrameException("No temporary frame available");
+            } else if ($scope === 'LF') {
+                $this->currLocalFrame()->setVariable($name, $this->getVariable($symb->getVarName())->getType(), $this->getVariable($symb->getVarName())->getValue());
+            }
+        }
+        else {
+            // literal -> int|bool|string|nil
+            if ($scope === 'GF') {
+                $this->globalFrame->setVariable($name, $symb->getType(), $symb->getSymbValue());
+            } else if ($scope === 'TF') {
+                $this->tmpFrame !== null ? $this->tmpFrame->setVariable($name, $symb->getType(), $symb->getSymbValue()) : throw new NonExistingFrameException("No temporary frame available");
+            } else if ($scope === 'LF') {
+                $this->currLocalFrame()->setVariable($name, $symb->getType(), $symb->getSymbValue());
+            }
         }
     }
 
@@ -63,7 +77,7 @@ class ExecutionContext {
 
     public function pushFrame(): void {
         // push temporary frame into local frames
-        $this->tmpFrame !== null ? array_push($this->localFrames, $this->tmpFrame) : throw new NonExistingFrameException("No temporary frame available");
+        $this->tmpFrame !== null ? $this->localFrames[] = $this->tmpFrame : throw new NonExistingFrameException("No temporary frame available");
         $this->tmpFrame = null;
     }
 

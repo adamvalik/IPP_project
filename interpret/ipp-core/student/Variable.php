@@ -5,29 +5,32 @@ namespace IPP\Student;
 use IPP\Student\Exceptions\MissingValueException;
 
 class Variable {
-    private ?string $value;
     private ?string $type;
+    private mixed $value;
     private bool $isInitialized;
 
-    public function __construct(string $type = null, string $value = null) {
+    public function __construct(string $type = null, mixed $value = null) {
         $this->type = $type;
         $this->value = $value;
         $this->isInitialized = ($value !== null && $type !== null);
     }
 
-    public function setVariable(string $value, string $type): void {
-        $this->value = $value;
+    public function setVariable(string $type, mixed $value): void {
         $this->type = $type;
+        $this->value = $value;
         $this->isInitialized = true;
     }
 
-    public function getValue(): ?string {
+    public function getValue(): mixed {
         $this->checkInitialized();
         return $this->value;
     }
 
-    public function getType(): ?string {
+    public function getType(): string {
         $this->checkInitialized();
+        if ($this->type === null) {
+            throw new MissingValueException("This should never happen because I've already checked if the variable is initialized.");
+        }
         return $this->type;
     }
 

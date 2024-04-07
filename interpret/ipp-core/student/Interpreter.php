@@ -27,7 +27,9 @@ class Interpreter extends AbstractInterpreter {
         
         $programElement = $dom->documentElement;
 
-        
+        /**
+         * @var array<Instruction>
+         */
         $instructions = [];
 
         if ($programElement !== null && $programElement->hasChildNodes()) {

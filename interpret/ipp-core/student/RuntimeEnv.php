@@ -12,7 +12,7 @@ class RuntimeEnv {
 
     private int $instrPtr = 0;
     /**
-     * @var array<string>
+     * @var array<Argument>
      */
     private array $dataStack = [];
     /**
@@ -27,13 +27,17 @@ class RuntimeEnv {
         for ($i = 0; $i < count($instructions); $i++) {
             if ($instructions[$i] instanceof Instructions\InstructionLABEL) {
                 // map the label to the index of the instruction
-                $this->labelMap[$instructions[$i]->getArg(1)->getValue()] = $i;
+                $this->labelMap[$instructions[$i]->getArg(1)->getLabel()] = $i;
             }
         }
     }
 
     public function setIPtoLabel(string $label): void {
         $this->instrPtr = $this->labelMap[$label];
+    }
+
+    public function setIP(int $ip): void {
+        $this->instrPtr = $ip;
     }
 
     public function IP(): int {
@@ -48,11 +52,11 @@ class RuntimeEnv {
         return $this->instrPtr++;
     }
 
-    public function pushData(string $data): void {
+    public function pushData(Argument $data): void {
         $this->dataStack[] = $data;
     }
 
-    public function popData(): string {
+    public function popData(): Argument {
         return !empty($this->dataStack) ? array_pop($this->dataStack) : throw new MissingValueException("Data stack is empty");
     }
 

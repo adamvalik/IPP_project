@@ -8,6 +8,6 @@ use IPP\Student\Instruction;
 class InstructionRETURN extends Instruction {
 
     public function execute(): void {
-        // Implementation
+        $this->runEnv->setIP($this->runEnv->popCall());
     }
 }

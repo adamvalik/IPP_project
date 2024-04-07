@@ -103,8 +103,8 @@ abstract class XMLValidator {
         if ($instrElement->attributes->length !== 2) {
             throw new XMLStructureException("Only opcode and order attributes are allowed in instruction element");
         }
-        // opcode
-        $opcode = $instrElement->getAttribute('opcode');
+        // opcode (case-insensitive)
+        $opcode = strtoupper($instrElement->getAttribute('opcode'));
         if (!array_key_exists(strtoupper($opcode), self::$instructions)) {
             throw new XMLStructureException("Invalid opcode '$opcode' in instruction element");
         }
@@ -155,6 +155,7 @@ abstract class XMLValidator {
             $argValue = $argElement->nodeValue;
             $argType = $argElement->getAttribute('type');
 
+            // only string can have empty value as an empty string
             if (($argValue === '' && $argType !== 'string') || $argValue === null) {
                 throw new XMLStructureException("Missing value in argument element");
             }
@@ -218,7 +219,7 @@ abstract class XMLValidator {
                         throw new XMLStructureException("Invalid type value in instruction '$order' '$opcode'");
                     }
                     break;
-                }
+            }
         }
     }
 }

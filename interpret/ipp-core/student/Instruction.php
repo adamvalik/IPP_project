@@ -49,6 +49,7 @@ abstract class Instruction {
         }
     }
 
+    // get argument by order (1, 2, 3)
     public function getArg(int $order): Argument {
         foreach ($this->arguments as $argument) {
             if ($argument->getArgOrder() === $order) {
