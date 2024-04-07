@@ -5,6 +5,7 @@ namespace IPP\Student;
 use DOMDocument;
 use DOMElement;
 use DOMAttr;
+use IPP\Student\Exceptions\SemanticException;
 use IPP\Student\Exceptions\XMLFormatException;
 use IPP\Student\Exceptions\XMLStructureException;
 
@@ -207,7 +208,7 @@ abstract class XMLValidator {
                         throw new XMLStructureException("Invalid label value in instruction '$order' '$opcode'");
                     }
                     if (in_array($argValue, self::$labelsSeen)) {
-                        throw new XMLStructureException("Duplicit label value in instruction '$order' '$opcode'");
+                        throw new SemanticException("Duplicit label value in instruction '$order' '$opcode'");
                     }
                     self::$labelsSeen[] = $argValue;
                     break;

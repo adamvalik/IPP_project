@@ -10,7 +10,11 @@ namespace IPP\Student;
 
 use DOMElement;
 use IPP\Core\AbstractInterpreter;
+use IPP\Core\Interface\InputReader;
+use IPP\Core\Interface\OutputWriter;
+use IPP\Core\Interface\SourceReader;
 use IPP\Core\ReturnCode;
+
 
 
 class Interpreter extends AbstractInterpreter {
@@ -60,5 +64,17 @@ class Interpreter extends AbstractInterpreter {
         }
 
         return ReturnCode::OK;
+    }
+
+    public function reader(): InputReader {
+        return $this->input;
+    }
+
+    public function writer(): OutputWriter {
+        return $this->stdout;
+    }
+
+    public function errorWriter(): OutputWriter {
+        return $this->stderr;
     }
 }

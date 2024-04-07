@@ -15,7 +15,7 @@ class ExecutionContext {
 
     public function __construct() {
         $this->globalFrame = new Frame();
-        $this->tmpFrame = new Frame();
+        $this->tmpFrame = null;
         $this->localFrames = [];
     }
 

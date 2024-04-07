@@ -41,7 +41,9 @@ class Argument {
 
     public function getSymbValue(): mixed {
         switch ($this->type) {
-            case 'var' | 'nil':
+            case 'nil':
+                return 'nil';
+            case 'var':
                 return $this->value;
             case 'int':
                 return $this->intValue();
