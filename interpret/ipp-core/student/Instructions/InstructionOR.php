@@ -6,7 +6,6 @@ use IPP\Student\Exceptions\OperandTypeException;
 use IPP\Student\Instruction;
 use IPP\Student\Argument;
 
-
 // OR <var> <symb1> <symb2>
 class InstructionOR extends Instruction {
 

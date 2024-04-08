@@ -8,6 +8,6 @@ use IPP\Student\Instruction;
 class InstructionBREAK extends Instruction {
 
     public function execute(): void {
-        $this->interpreter->errorWriter()->writeString("hej cavo");
+        $this->interpreter->errorWriter()->writeString("break");
     }
 }

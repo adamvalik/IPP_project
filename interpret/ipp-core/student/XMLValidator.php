@@ -5,7 +5,6 @@ namespace IPP\Student;
 use DOMDocument;
 use DOMElement;
 use DOMAttr;
-use IPP\Student\Exceptions\SemanticException;
 use IPP\Student\Exceptions\XMLFormatException;
 use IPP\Student\Exceptions\XMLStructureException;
 
@@ -18,12 +17,12 @@ abstract class XMLValidator {
     /**
      * @var array<int>
      */
-    public static $ordersSeen = [];
+    private static $ordersSeen = [];
 
     /**
      * @var array<string, array<int, string>>
      */
-    public static $instructions = [
+    private static $instructions = [
         'MOVE' => ['var', 'symb'],
         'CREATEFRAME' => [],
         'PUSHFRAME' => [],
@@ -66,7 +65,7 @@ abstract class XMLValidator {
         
         // validate the root element <program>
         if ($programElement === null || $programElement->tagName !== 'program') {
-            throw new XMLStructureException("Invalid root element");
+            throw new XMLFormatException("Invalid root element");
         }
         // mandatory language attribute
         if (!$programElement->hasAttribute('language') || $programElement->getAttribute('language') !== 'IPPcode24') {
@@ -91,7 +90,7 @@ abstract class XMLValidator {
         }
     }
 
-    public static function validateInstruction(DOMElement $instrElement): void {
+    private static function validateInstruction(DOMElement $instrElement): void {
         // attributes validation (opcode, order)
         if (!$instrElement->hasAttribute('opcode') || !$instrElement->hasAttribute('order')) {
             throw new XMLStructureException("Missing attributes opcode or order in instruction element");

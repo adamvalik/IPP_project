@@ -1,10 +1,12 @@
 <?php
 
+
 namespace IPP\Student;
 
 use IPP\Student\Exceptions\XMLStructureException;
 
 class Argument {
+    
     private string $type;
     private string $value;
     private int $argOrder;

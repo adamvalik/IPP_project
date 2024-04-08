@@ -6,7 +6,6 @@ use IPP\Student\Exceptions\OperandTypeException;
 use IPP\Student\Instruction;
 use IPP\Student\Argument;
 
-
 // NOT <var> <symb>
 class InstructionNOT extends Instruction {
 

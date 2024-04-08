@@ -86,7 +86,7 @@ class ExecutionContext {
         !empty($this->localFrames) ? $this->tmpFrame = array_pop($this->localFrames) : throw new NonExistingFrameException("No local frame available");
     }
 
-    public function currLocalFrame(): Frame {
+    private function currLocalFrame(): Frame {
         return empty($this->localFrames) ? throw new NonExistingFrameException("No local frame available") : end($this->localFrames);
     }
 

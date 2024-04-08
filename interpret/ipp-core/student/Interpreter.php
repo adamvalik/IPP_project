@@ -5,19 +5,15 @@
  * @author Adam Valík <xvalik05>
  */
 
-
 namespace IPP\Student;
 
 use DOMElement;
 use IPP\Core\AbstractInterpreter;
 use IPP\Core\Interface\InputReader;
 use IPP\Core\Interface\OutputWriter;
-use IPP\Core\Interface\SourceReader;
-
-
 
 class Interpreter extends AbstractInterpreter {
-    private int $ret_code = 0;
+    private int $retCode = 0;
 
     public function execute(): int {
         $exec = new ExecutionContext();
@@ -46,7 +42,7 @@ class Interpreter extends AbstractInterpreter {
         }
         else {
             // there is only <program> element
-            return $this->ret_code;
+            return $this->retCode;
         }
 
         // sort the instructions by order
@@ -63,7 +59,7 @@ class Interpreter extends AbstractInterpreter {
             $run->incIP();
         }
 
-        return $this->ret_code;
+        return $this->retCode;
     }
 
     public function reader(): InputReader {
@@ -78,7 +74,7 @@ class Interpreter extends AbstractInterpreter {
         return $this->stderr;
     }
 
-    public function setRetCode(int $ret_code): void {
-        $this->ret_code = $ret_code;
+    public function setRetCode(int $retCode): void {
+        $this->retCode = $retCode;
     }
 }

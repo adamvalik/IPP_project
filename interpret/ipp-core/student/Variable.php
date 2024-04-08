@@ -7,18 +7,18 @@ use IPP\Student\Exceptions\MissingValueException;
 class Variable {
     private ?string $type;
     private mixed $value;
-    private bool $isInitialized;
+    private bool $initialized;
 
     public function __construct(string $type = null, mixed $value = null) {
         $this->type = $type;
         $this->value = $value;
-        $this->isInitialized = ($value !== null && $type !== null);
+        $this->initialized = ($value !== null && $type !== null);
     }
 
     public function setVariable(string $type, mixed $value): void {
         $this->type = $type;
         $this->value = $value;
-        $this->isInitialized = true;
+        $this->initialized = true;
     }
 
     public function getValue(): mixed {
@@ -35,12 +35,12 @@ class Variable {
     }
 
     public function checkInitialized(): void {
-        if (!$this->isInitialized) {
+        if (!$this->initialized) {
             throw new MissingValueException("Variable not initialized");
         }
     }
 
     public function isInitialized(): bool {
-        return $this->isInitialized;
+        return $this->initialized;
     }
 }
