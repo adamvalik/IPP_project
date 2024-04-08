@@ -7,5 +7,7 @@ use IPP\Student\Instruction;
 // LABEL <label>
 class InstructionLABEL extends Instruction {
 
-    public function execute(): void {}
+    public function execute(): void {
+        // already proccesed
+    }
 }

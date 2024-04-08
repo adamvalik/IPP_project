@@ -39,4 +39,8 @@ class Variable {
             throw new MissingValueException("Variable not initialized");
         }
     }
+
+    public function isInitialized(): bool {
+        return $this->isInitialized;
+    }
 }
