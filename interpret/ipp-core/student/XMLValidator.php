@@ -21,11 +21,6 @@ abstract class XMLValidator {
     public static $ordersSeen = [];
 
     /**
-     * @var array<string>
-     */
-    public static $labelsSeen = [];
-
-    /**
      * @var array<string, array<int, string>>
      */
     public static $instructions = [
@@ -207,10 +202,6 @@ abstract class XMLValidator {
                     if (!preg_match(self::LABEL_REGEX, $argValue)) {
                         throw new XMLStructureException("Invalid label value in instruction '$order' '$opcode'");
                     }
-                    if (in_array($argValue, self::$labelsSeen)) {
-                        throw new SemanticException("Duplicit label value in instruction '$order' '$opcode'");
-                    }
-                    self::$labelsSeen[] = $argValue;
                     break;
                 case 'type':
                     if ($argType !== 'type') {

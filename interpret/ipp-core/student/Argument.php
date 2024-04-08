@@ -71,6 +71,6 @@ class Argument {
 
     public function stringValue(): string {
         // converts all escape sequences to their respective characters
-        return preg_replace_callback('/\\\d{3}/', function ($matches) { return chr((int)$matches[1]); }, $this->value ) ?? '';
+        return preg_replace_callback('/\\\\(\d{3})/', function ($matches) { return chr((int)($matches[1])); }, $this->value ) ?? '';
     }
 }

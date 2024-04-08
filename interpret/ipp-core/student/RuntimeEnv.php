@@ -3,6 +3,7 @@
 namespace IPP\Student;
 
 use IPP\Student\Exceptions\MissingValueException;
+use IPP\Student\Exceptions\SemanticException;
 
 class RuntimeEnv {
     /**
@@ -20,19 +21,28 @@ class RuntimeEnv {
      */
     private array $callStack = [];
 
+    private int $instr_len = 0;
+
     /**
      * @param array<Instruction> $instructions
      */
     public function createLabelMap(array $instructions): void {
+        $this->instr_len = count($instructions);
         for ($i = 0; $i < count($instructions); $i++) {
             if ($instructions[$i] instanceof Instructions\InstructionLABEL) {
-                // map the label to the index of the instruction
+                // map the label to the index of the instruction, error if the label already exists
+                if (array_key_exists($instructions[$i]->getArg(1)->getLabel(), $this->labelMap)) {
+                    throw new SemanticException("Label ".$instructions[$i]->getArg(1)->getLabel()." already exists");
+                }
                 $this->labelMap[$instructions[$i]->getArg(1)->getLabel()] = $i;
             }
         }
     }
 
     public function setIPtoLabel(string $label): void {
+        if (!array_key_exists($label, $this->labelMap)) {
+            throw new SemanticException("Label $label not found");
+        }
         $this->instrPtr = $this->labelMap[$label];
     }
 
@@ -52,6 +62,11 @@ class RuntimeEnv {
         return $this->instrPtr++;
     }
 
+    public function exit(): void {
+        // set IP to the end of the instructions
+        $this->instrPtr = $this->instr_len; 
+    }
+
     public function pushData(Argument $data): void {
         $this->dataStack[] = $data;
     }
@@ -67,5 +82,4 @@ class RuntimeEnv {
     public function popCall(): int {
         return !empty($this->callStack) ? array_pop($this->callStack) : throw new MissingValueException("Call stack is empty");
     }
-    
 }

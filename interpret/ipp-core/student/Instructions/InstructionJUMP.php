@@ -8,6 +8,6 @@ use IPP\Student\Instruction;
 class InstructionJUMP extends Instruction {
 
     public function execute(): void {
-        // Implementation
+        $this->runEnv->setIPtoLabel($this->arguments[0]->getLabel());
     }
 }

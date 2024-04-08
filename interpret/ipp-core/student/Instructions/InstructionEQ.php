@@ -25,14 +25,16 @@ class InstructionEQ extends Instruction {
                 $i === 1 ? $op1 = $op : $op2 = $op;
             }
         }
+        if ($type1 !== $type2 && $type1 !== "nil" && $type2 !== "nil") {
+            throw new OperandTypeException("Instruction EQ expects two arguments of the same type");
+        }
         if ($type1 === "nil" && $type2 === "nil") {
-            throw new OperandTypeException("Instruction EQ cannot compare two nil values");
+            $result = "true";
+        } else if ($type1 === "nil" || $type2 === "nil") {
+            $result = "false";
+        } else {
+            $result = $op1 == $op2 ? "true" : "false";
         }
-        if ($type1 !== $type2 ) {
-            throw new OperandTypeException("Instruction GT expects two arguments of the same type");
-        }
-        
-        $result = $op1 == $op2 ? "true" : "false";
 
         $arg = new Argument("bool", $result, 0);
         $this->exec->setVariable($this->arguments[0]->getVarName(), $arg);

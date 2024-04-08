@@ -13,11 +13,11 @@ use IPP\Core\AbstractInterpreter;
 use IPP\Core\Interface\InputReader;
 use IPP\Core\Interface\OutputWriter;
 use IPP\Core\Interface\SourceReader;
-use IPP\Core\ReturnCode;
 
 
 
 class Interpreter extends AbstractInterpreter {
+    private int $ret_code = 0;
 
     public function execute(): int {
         $exec = new ExecutionContext();
@@ -46,7 +46,7 @@ class Interpreter extends AbstractInterpreter {
         }
         else {
             // there is only <program> element
-            return ReturnCode::OK;
+            return $this->ret_code;
         }
 
         // sort the instructions by order
@@ -63,7 +63,7 @@ class Interpreter extends AbstractInterpreter {
             $run->incIP();
         }
 
-        return ReturnCode::OK;
+        return $this->ret_code;
     }
 
     public function reader(): InputReader {
@@ -76,5 +76,9 @@ class Interpreter extends AbstractInterpreter {
 
     public function errorWriter(): OutputWriter {
         return $this->stderr;
+    }
+
+    public function setRetCode(int $ret_code): void {
+        $this->ret_code = $ret_code;
     }
 }
