@@ -19,18 +19,17 @@ class Interpreter extends AbstractInterpreter {
     private int $retCode = 0;
 
     public function execute(): int {
-        $exec = new ExecutionContext();
-        $run = new RuntimeEnv();
-
         $dom = $this->source->getDOMDocument();  
-
+        
         // validate the XML structure
         XMLValidator::validateXML($dom);
         
         $programElement = $dom->documentElement;
-
+        
         /** @var array<Instruction> */
         $instructions = [];
+        $exec = new ExecutionContext();
+        $run = new RuntimeEnv();
 
         if ($programElement !== null && $programElement->hasChildNodes()) {
             // create a list of instructions
