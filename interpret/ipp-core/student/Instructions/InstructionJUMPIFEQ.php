@@ -31,7 +31,7 @@ class InstructionJUMPIFEQ extends Instruction {
         } else if ($type1 === "nil" || $type2 === "nil") {
             $result = false;
         } else {
-            $result = $op1 == $op2;
+            $result = $op1 === $op2;
         }
 
         if ($result) {

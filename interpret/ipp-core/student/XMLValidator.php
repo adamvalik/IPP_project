@@ -154,6 +154,7 @@ abstract class XMLValidator {
             if (($argValue === '' && $argType !== 'string') || $argValue === null) {
                 throw new XMLStructureException("Missing value in argument element");
             }
+            $argValue = trim($argValue);
 
             switch ($expectedArg) {
                 case 'var':

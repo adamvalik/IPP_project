@@ -33,7 +33,7 @@ abstract class Instruction {
         return static::class;
     }
 
-    public function parseArguments(DOMElement $instructionElement): void {
+    protected function parseArguments(DOMElement $instructionElement): void {
         // parse arguments
         for ($i = 1; $i <= 3; $i++) {
             $arg = $instructionElement->getElementsByTagName('arg' . $i);
@@ -41,7 +41,7 @@ abstract class Instruction {
                 if ($arg[0]->nodeValue === null) {
                     throw new XMLStructureException("Invalid argument value");
                 }
-                $this->arguments[] = new Argument($arg[0]->getAttribute('type'), $arg[0]->nodeValue, $i);
+                $this->arguments[] = new Argument($arg[0]->getAttribute('type'), trim($arg[0]->nodeValue), $i);
             }
             else if ($arg->length > 1) {
                 throw new XMLStructureException("Invalid arguments, more occurences of one argument");

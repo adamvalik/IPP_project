@@ -27,7 +27,7 @@ class InstructionSTRI2INT extends Instruction {
 
         $op2 = 0;
         if ($this->arguments[2]->getType() === 'var') {
-            $var = $this->exec->getVariable($this->arguments[1]->getVarName());
+            $var = $this->exec->getVariable($this->arguments[2]->getVarName());
             if ($var->getType() !== 'int') {
                 throw new OperandTypeException("Instruction STRI2INT expects integer as third argument");
             }
