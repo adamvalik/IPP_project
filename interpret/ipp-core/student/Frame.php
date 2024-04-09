@@ -1,4 +1,8 @@
 <?php
+/**
+ * Project: IPP Interpreter
+ * @author Adam Valík <xvalik05>
+ */
 
 namespace IPP\Student;
 
@@ -6,9 +10,7 @@ use IPP\Student\Exceptions\NonExistingVariableException;
 use IPP\Student\Exceptions\SemanticException;
 
 class Frame {
-    /**
-     * @var array<Variable>
-     */
+    /** @var array<Variable> */
     private array $variables;
 
     public function __construct() {

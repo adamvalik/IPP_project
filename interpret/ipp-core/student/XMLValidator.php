@@ -1,4 +1,8 @@
 <?php
+/**
+ * Project: IPP Interpreter
+ * @author Adam Valík <xvalik05>
+ */
 
 namespace IPP\Student;
 
@@ -9,6 +13,7 @@ use IPP\Student\Exceptions\XMLFormatException;
 use IPP\Student\Exceptions\XMLStructureException;
 
 abstract class XMLValidator {
+    // regex patterns for the IPPcode24 language
     public const string VARIABLE_REGEX = '/^(G|L|T)F@[a-zA-Z_\-$&%*!?][\w_\-$&%*!?]*$/';
     public const string LABEL_REGEX = '/^[a-zA-Z_\-$&%*!?][a-zA-Z0-9_\-$&%*!?]*$/';
     public const string INT_REGEX = '/^(\+|-)?((\d(_?\d)*)|(0[oO][0-7]+)|(0[xX][\da-fA-F]+))$/';
@@ -60,6 +65,7 @@ abstract class XMLValidator {
         'BREAK' => []
     ];
 
+    // validate the source XML document to ensure it is a valid IPPcode24 program and can be used as expected
     public static function validateXML(DOMDocument $dom): void {
         $programElement = $dom->documentElement;
         
@@ -121,18 +127,22 @@ abstract class XMLValidator {
                 if ($argElement->tagName !== 'arg1' && $argElement->tagName !== 'arg2' && $argElement->tagName !== 'arg3') {
                     throw new XMLStructureException("Invalid element '$argElement->tagName' in instruction element (only arg1, arg2, arg3 are allowed)");
                 }
+                // type attribute
                 if (!$argElement->hasAttribute('type')) {
                     throw new XMLStructureException("Missing attribute in argument element");
                 }
+                // only type attribute is allowed
                 if ($argElement->attributes->length !== 1) {
                     throw new XMLStructureException("Only type attribute is allowed in argument element");
                 }
+                // type attribute value
                 if (!in_array($argElement->getAttribute('type'), ['int', 'bool', 'string', 'nil', 'type', 'label', 'var'])) {
                     throw new XMLStructureException("Invalid type attribute in argument element");
                 }
                 $arguments[] = $argElement;
             }
         }
+        // expected number of arguments
         if (count($arguments) !== count(self::$instructions[$opcode])) {
             throw new XMLStructureException("Invalid number of arguments in instruction '$order' '$opcode'");
         }
@@ -154,8 +164,10 @@ abstract class XMLValidator {
             if (($argValue === '' && $argType !== 'string') || $argValue === null) {
                 throw new XMLStructureException("Missing value in argument element");
             }
+
             $argValue = trim($argValue);
 
+            // validate the value based on the expected argument type using regex patterns
             switch ($expectedArg) {
                 case 'var':
                     if ($argType !== 'var') {

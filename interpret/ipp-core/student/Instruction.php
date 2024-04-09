@@ -1,4 +1,8 @@
 <?php
+/**
+ * Project: IPP Interpreter
+ * @author Adam Valík <xvalik05>
+ */
 
 namespace IPP\Student;
 
@@ -12,9 +16,7 @@ abstract class Instruction {
     protected ExecutionContext $exec;
     protected RuntimeEnv $runEnv;
 
-    /**
-     * @var array<Argument>
-     */
+    /** @var array<Argument> */
     protected $arguments = [];
 
     public function __construct(DOMElement $instructionElement, Interpreter $interpreter, ExecutionContext $executionContext, RuntimeEnv $runtimeEnv) {
@@ -33,9 +35,10 @@ abstract class Instruction {
         return static::class;
     }
 
-    protected function parseArguments(DOMElement $instructionElement): void {
+    private function parseArguments(DOMElement $instructionElement): void {
         // parse arguments
         for ($i = 1; $i <= 3; $i++) {
+            // pick them in the correct order
             $arg = $instructionElement->getElementsByTagName('arg' . $i);
             if ($arg->length === 1 && $arg[0] instanceof DOMElement) {
                 if ($arg[0]->nodeValue === null) {
@@ -49,7 +52,7 @@ abstract class Instruction {
         }
     }
 
-    // get argument by order (1, 2, 3)
+    // get argument by order (1, 2 or 3)
     public function getArg(int $order): Argument {
         foreach ($this->arguments as $argument) {
             if ($argument->getArgOrder() === $order) {
@@ -59,5 +62,6 @@ abstract class Instruction {
         throw new XMLStructureException("Argument with order $order not found");
     }
 
+    // execute method is implemented by each instruction
     abstract public function execute(): void;
 }

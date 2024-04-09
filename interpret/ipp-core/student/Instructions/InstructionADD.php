@@ -1,4 +1,8 @@
 <?php
+/**
+ * Project: IPP Interpreter
+ * @author Adam Valík <xvalik05>
+ */
 
 namespace IPP\Student\Instructions;
 
@@ -20,7 +24,6 @@ class InstructionADD extends Instruction {
                     throw new OperandTypeException("Instruction ADD expects two integer arguments");
                 }
                 if (is_int($var->getValue()) === false) {
-                    // just to be sure
                     throw new OperandTypeException("Instruction ADD expects two integer arguments");
                 }
                 $i === 1 ? $op1 = $var->getValue() : $op2 = $var->getValue();

@@ -1,4 +1,8 @@
 <?php
+/**
+ * Project: IPP Interpreter
+ * @author Adam Valík <xvalik05>
+ */
 
 namespace IPP\Student\Exceptions;
 

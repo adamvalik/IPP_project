@@ -1,4 +1,8 @@
 <?php
+/**
+ * Project: IPP Interpreter
+ * @author Adam Valík <xvalik05>
+ */
 
 namespace IPP\Student;
 
@@ -8,9 +12,8 @@ class ExecutionContext {
 
     private Frame $globalFrame;
     private ?Frame $tmpFrame = null;
-    /**
-     * @var array<Frame>
-     */
+
+    /** @var array<Frame> */
     private array $localFrames;
 
     public function __construct() {
@@ -18,6 +21,8 @@ class ExecutionContext {
         $this->tmpFrame = null;
         $this->localFrames = [];
     }
+
+    //!!! manipulation with variables are done only through the ExecutionContext to ensure correct frames
 
     public function addVariable(string $var): void {
         $scope = explode('@', $var)[0];
@@ -87,6 +92,7 @@ class ExecutionContext {
     }
 
     private function currLocalFrame(): Frame {
+        // current local frame is on the top of the stack
         return empty($this->localFrames) ? throw new NonExistingFrameException("No local frame available") : end($this->localFrames);
     }
 

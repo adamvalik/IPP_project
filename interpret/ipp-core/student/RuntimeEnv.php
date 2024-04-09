@@ -1,4 +1,8 @@
 <?php
+/**
+ * Project: IPP Interpreter
+ * @author Adam Valík <xvalik05>
+ */
 
 namespace IPP\Student;
 
@@ -6,33 +10,28 @@ use IPP\Student\Exceptions\MissingValueException;
 use IPP\Student\Exceptions\SemanticException;
 
 class RuntimeEnv {
-    /**
-     * @var array<string,int> 
-     */
+    
+    /** @var array<string,int> */
     private array $labelMap = [];
 
     private int $instrPtr = 0;
-    /**
-     * @var array<Argument>
-     */
+    
+    /** @var array<Argument> */
     private array $dataStack = [];
-    /**
-     * @var array<int>
-     */
+    
+    /** @var array<int> */
     private array $callStack = [];
 
     private int $instr_len = 0;
 
-    /**
-     * @param array<Instruction> $instructions
-     */
+    /** @param array<Instruction> $instructions */
     public function createLabelMap(array $instructions): void {
-        $this->instr_len = count($instructions);
+        $this->instr_len = count($instructions); // set the count of instructions
         for ($i = 0; $i < count($instructions); $i++) {
             if ($instructions[$i] instanceof Instructions\InstructionLABEL) {
                 // map the label to the index of the instruction, error if the label already exists
                 if (array_key_exists($instructions[$i]->getArg(1)->getLabel(), $this->labelMap)) {
-                    throw new SemanticException("Label ".$instructions[$i]->getArg(1)->getLabel()." already exists");
+                    throw new SemanticException("Label " . $instructions[$i]->getArg(1)->getLabel() . " already exists");
                 }
                 $this->labelMap[$instructions[$i]->getArg(1)->getLabel()] = $i;
             }
@@ -67,6 +66,7 @@ class RuntimeEnv {
         $this->instrPtr = $this->instr_len; 
     }
 
+    // data stack manipulation
     public function pushData(Argument $data): void {
         $this->dataStack[] = $data;
     }
@@ -75,6 +75,7 @@ class RuntimeEnv {
         return !empty($this->dataStack) ? array_pop($this->dataStack) : throw new MissingValueException("Data stack is empty");
     }
 
+    // call stack manipulation
     public function pushCall(int $call): void {
         $this->callStack[] = $call;
     }

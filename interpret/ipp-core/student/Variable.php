@@ -1,4 +1,8 @@
 <?php
+/**
+ * Project: IPP Interpreter
+ * @author Adam Valík <xvalik05>
+ */
 
 namespace IPP\Student;
 
@@ -29,7 +33,7 @@ class Variable {
     public function getType(): string {
         $this->checkInitialized();
         if ($this->type === null) {
-            throw new MissingValueException("This should never happen because I've already checked if the variable is initialized.");
+            throw new MissingValueException("This should never happen because I've already checked if the variable is initialized, only the phpstan does not see it.");
         }
         return $this->type;
     }

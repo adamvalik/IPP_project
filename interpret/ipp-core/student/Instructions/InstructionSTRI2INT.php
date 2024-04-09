@@ -1,4 +1,8 @@
 <?php
+/**
+ * Project: IPP Interpreter
+ * @author Adam Valík <xvalik05>
+ */
 
 namespace IPP\Student\Instructions;
 
@@ -49,6 +53,7 @@ class InstructionSTRI2INT extends Instruction {
             throw new StringOperationException("Instruction STRI2INT index out of bounds");
         }
         $char = $op1[$op2];
+        
         /** @var int|false $result */
         $result = mb_ord($char, 'UTF-8');
         if ($result === false) {
