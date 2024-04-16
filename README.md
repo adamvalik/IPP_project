@@ -10,4 +10,4 @@ Celkem bez rozšíření: 97 %
 
 # Interpret (interpret.php)
 
-phpstan level 9, všech 363 testů prošlo
+phpstan level 9, 366/367 testů prošlo

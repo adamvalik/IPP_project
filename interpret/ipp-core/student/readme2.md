@@ -35,7 +35,7 @@ Interpretace instrukcí se pak provádí za použití poskytnutých metod objekt
 Volání metody ``execute()`` ve třídě ``Engine`` zachycuje a zpracovává výjimky třidy ``IPP\Core\IPPException``. Tato třída byla zděděna 9 podtřídami ve jmeném prostoru ``IPP\Student\Exceptions``, které jsou definovány svým chybovým kódem a patřičně házeny, pakliže dojde k chybě v běhu programu.
 
 ## UML Diagram Tříd
-![UML Class Diagram](Interpret.jpeg)
+<img src="Interpret.jpeg" alt="UML Class Diagram" width="1000"/>  </br>
 Abstraktní třídy a metody jsou vyznačeny zvýrazněnou kurzívou. Rámec IPP\Core, jež byl poskytnut, je uveden ve zkrácené formě a šedou barvou. Pro přehlednost diagramu jsou vynechány vztahy mezi výjimkami a zbylými třídami a výčty jednotlivých instrukcí a výjimek jsou označeny ``...``. V diagramu se též pro přehled komunikace mezi rámci nachází označení jednotlivých jmenných prostorů.
 
 ### PHPStan
