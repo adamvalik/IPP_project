@@ -8,7 +8,7 @@ _Rámec IPP\Core byl poskytnut, a tudíž neimplementován autorem. Veškerá au
 Program začíná v rámci IPP\Core, který slouží jako podklad pro studentskou implementaci. Třída ``Engine`` obstarává vstupní argumenty příkazové řádky a bezpečně instanciuje objekt třídy ``IPP\Student\Interpreter`` společně s jejím přístupem ke vstupně-výstupním metodám.
 
 ### IPP\Student\Interpreter
-Třída ``Interpreter`` dědí třídu ``IPP\Core\AbstractInterpreter`` a její metoda ``execute()`` slouží jako vstupní bod k implementaci projektu. 
+Třída ``Interpreter`` dědí atributy a metody třídy ``IPP\Core\AbstractInterpreter`` a její metoda ``execute()`` slouží jako vstupní bod k implementaci projektu. 
 
 Nejdříve dojde ke kompletní validaci zdrojového XML souboru abstraktní třídou ``XMLValidator`` která slouží jako modul zahrnující činnosti vedoucí k odchycení chyb v XML kódu ze sémantického hlediska dle očekávané struktury a taktéž dle očekávaných parametrů jednotlivých instrukcí. Pakliže není hozena žádná výjimka, následná interpretace může očekávat správný formát a stukturu zpracovávaného kódu a předejít tak chybám a dalším redundantním kontrolám.
 
